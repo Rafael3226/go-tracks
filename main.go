@@ -4,40 +4,31 @@ import (
 	"log"
 	"os"
 	"path/filepath"
-	"tracks/audiofile"
+	"strings"
 	"tracks/files"
 )
 
 func main() {
     // Use filepath.Join to create the path that works on both Linux and Windows
     // For Windows: "D:\Music", For Linux: "D:/Music"
-    folderPath := filepath.Join("D:", "Music") 
-    
+    folderPath := filepath.Join("D:", "Music")
 
-    pathList, err := files.ListFolderContent(folderPath)
+    metadataList, failedPaths, err := files.ListFolderContent(folderPath)
     if err != nil {
-        log.Fatalf("Error Listing Folder Content: %v", err)
+        // log.Fatalf("Error Listing Folder Content: %v", err)
     }
 
-    for _ , path := range pathList {
-        // Open the audio file
-        file, err := os.Open(path)
-        if err != nil {
-            log.Fatalf("Error opening the audio file: %v", err)
-        }
-        defer file.Close()
+    metadataContent := strings.Join(metadataList,"\n")
+    metadataCSV := "all_tracks.csv"
+    CreateFile(metadataCSV,metadataContent)
 
-        metadata,err := audiofile.ParceMetada(file)
-        if err != nil {
-            log.Fatalf("Error Parcing the Metadata: %v", err)
-        }
-        
-    }
+    faildContent := strings.Join(failedPaths,"\n")
+    failedCSV := "failed.csv"
+    CreateFile(failedCSV,faildContent)
+}
 
-    content := ""
-    
-    newCSV := "all_tracks.csv"
-    file, err := os.Create(newCSV)
+func CreateFile(name string, content string) {
+    file, err := os.Create(name)
 
     _, err = file.WriteString(content)
     if err != nil {
