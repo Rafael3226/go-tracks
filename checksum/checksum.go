@@ -6,11 +6,11 @@ import (
 	"io"
 )
 
-func SHA1(file io.Reader) (string,error){
+func SHA1(file io.Reader) (string, error) {
 	// Calculate the SHA1 checksum of the audio data
 	hash := sha1.New()
 	if _, err := io.Copy(hash, file); err != nil {
-		return "",err
+		return "", err
 	}
 
 	// Get the SHA1 checksum as a byte slice
@@ -19,5 +19,5 @@ func SHA1(file io.Reader) (string,error){
 	// Convert the byte slice to a hexadecimal string
 	checksum := fmt.Sprintf("%x", checksumBytes)
 
-	return checksum,nil
+	return checksum, nil
 }
